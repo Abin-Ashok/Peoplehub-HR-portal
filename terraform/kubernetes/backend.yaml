@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peoplehub-backend
+  namespace: peoplehub
+  labels:
+    app: peoplehub-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: peoplehub-backend
+  template:
+    metadata:
+      labels:
+        app: peoplehub-backend
+    spec:
+      serviceAccountName: peoplehub-backend
+      containers:
+        - name: backend
+          image: 555509860178.dkr.ecr.ap-south-1.amazonaws.com/peoplehub-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: peoplehub-backend-config
+            - secretRef:
+                name: peoplehub-backend-db
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: peoplehub-backend
+  namespace: peoplehub

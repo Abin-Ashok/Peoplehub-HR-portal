@@ -1,0 +1,96 @@
+
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION = 'ap-south-1'
+        AWS_ACCOUNT_ID = '555509860178'
+        ECR_REPOSITORY = 'peoplehub-backend'
+        EKS_CLUSTER = 'peoplehub-prod-eks'
+        K8S_NAMESPACE = 'peoplehub'
+        DEPLOYMENT_NAME = 'peoplehub-backend'
+        CONTAINER_NAME = 'backend'
+    }
+
+    stages {
+        stage('Checkout GitHub') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Prepare Image Tag') {
+            steps {
+                script {
+                    env.IMAGE_TAG = sh(
+                        script: 'git rev-parse --short=8 HEAD',
+                        returnStdout: true
+                    ).trim()
+
+                    env.ECR_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPOSITORY}"
+                }
+                echo "Building image: ${env.ECR_URI}:${env.IMAGE_TAG}"
+            }
+        }
+
+        stage('Login to Amazon ECR') {
+            steps {
+                sh '''
+                    aws ecr get-login-password --region "$AWS_REGION" |
+                    docker login --username AWS --password-stdin \
+                    "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com"
+                '''
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                   docker build -t "$ECR_URI:$IMAGE_TAG" -f backend/Dockerfile backend 
+                '''
+            }
+        }
+
+        stage('Push Image to ECR') {
+            steps {
+                sh '''
+                    docker push "$ECR_URI:$IMAGE_TAG"
+                '''
+            }
+        }
+
+        stage('Configure EKS Access') {
+            steps {
+                sh '''
+                    aws eks update-kubeconfig \
+                    --region "$AWS_REGION" \
+                    --name "$EKS_CLUSTER"
+                '''
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                sh '''
+                    kubectl set image \
+                    deployment/"$DEPLOYMENT_NAME" \
+                    "$CONTAINER_NAME=$ECR_URI:$IMAGE_TAG" \
+                    -n "$K8S_NAMESPACE"
+                '''
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                sh '''
+                    kubectl rollout status \
+                    deployment/"$DEPLOYMENT_NAME" \
+                    -n "$K8S_NAMESPACE" \
+                    --timeout=180s
+
+                    kubectl get pods -n "$K8S_NAMESPACE"
+                '''
+            }
+        }
+    }
+}

@@ -1,0 +1,1 @@
+{"QueueUrl":"https://sqs.ap-south-1.amazonaws.com/555509860178/peoplehub-employee-events","MessageBody":"{\"eventType\":\"EmployeeCreated\",\"employee\":{\"email\":\"abin04400@gmail.com\",\"department\":\"Testing\",\"name\":\"PeopleHub Test\",\"id\":\"TEST-002\"}}"}

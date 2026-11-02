@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: peoplehub-backend-config
+  namespace: peoplehub
+data:
+  PORT: "3000"
+  AWS_REGION: "ap-south-1"
+  SQS_QUEUE_URL: "https://sqs.ap-south-1.amazonaws.com/555509860178/peoplehub-employee-events"
+
+  COGNITO_USER_POOL_ID: "ap-south-1_dbY4qRjBw"
+  COGNITO_CLIENT_ID: "6shf8ufn5a4fbj0mm8994apm1n"
+
+  DB_HOST: "peoplehub-prod-mysql.crayau4wqttc.ap-south-1.rds.amazonaws.com"
+  DB_PORT: "3306"
+  DB_NAME: "peoplehub"

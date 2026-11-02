@@ -1,0 +1,27 @@
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+
+# Node.js dependencies
+node_modules/
+
+# Terraform generated files and state
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+
+# Credentials and private keys
+*.pem
+*.key
+credentials
+
+# Terraform variable files
+*.tfvars
+!*.tfvars.example
+
+# Kubernetes secrets
+**/*secret*.yaml
+**/*secret*.yml

@@ -1,0 +1,113 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION = 'ap-south-1'
+        AWS_ACCOUNT_ID = '555509860178'
+        ECR_REPOSITORY = 'peoplehub-frontend'
+        ASG_NAME = 'peoplehub-prod-frontend-asg'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    env.IMAGE_TAG = sh(
+                        script: 'git rev-parse --short HEAD',
+                        returnStdout: true
+                    ).trim()
+                }
+
+                sh '''
+                    docker build \
+                      -t $ECR_REPOSITORY:$IMAGE_TAG \
+                      -t $ECR_REPOSITORY:latest .
+                '''
+            }
+        }
+
+        stage('Push to ECR') {
+            steps {
+                sh '''
+                    aws ecr get-login-password --region $AWS_REGION \
+                      | docker login --username AWS --password-stdin \
+                        $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+                    docker tag $ECR_REPOSITORY:$IMAGE_TAG \
+                      $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+                    docker tag $ECR_REPOSITORY:latest \
+                      $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+
+                    docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+                    docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+                '''
+            }
+        }
+
+        stage('Refresh Frontend EC2') {
+            steps {
+                script {
+                    def refreshId = sh(
+                        script: '''
+                            aws autoscaling start-instance-refresh \
+                              --auto-scaling-group-name $ASG_NAME \
+                              --region $AWS_REGION \
+                              --preferences '{"MinHealthyPercentage":0,"MaxHealthyPercentage":100,"InstanceWarmup":300}' \
+                              --query 'InstanceRefreshId' \
+                              --output text
+                        ''',
+                        returnStdout: true
+                    ).trim()
+
+                    echo "Instance Refresh started: ${refreshId}"
+
+                    timeout(time: 30, unit: 'MINUTES') {
+                        waitUntil {
+                            def status = sh(
+                                script: """
+                                    aws autoscaling describe-instance-refreshes \
+                                      --auto-scaling-group-name $ASG_NAME \
+                                      --region $AWS_REGION \
+                                      --instance-refresh-ids ${refreshId} \
+                                      --query 'InstanceRefreshes[0].Status' \
+                                      --output text
+                                """,
+                                returnStdout: true
+                            ).trim()
+
+                            echo "Instance Refresh status: ${status}"
+
+                            if (status == 'Successful') {
+                                return true
+                            }
+
+                            if (status in ['Failed', 'Cancelled',
+                                           'RollbackFailed', 'RollbackSuccessful']) {
+                                error("Instance Refresh ended with status: ${status}")
+                            }
+
+                            return false
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Frontend deployment completed successfully.'
+        }
+        failure {
+            echo 'Frontend deployment failed. Check the Jenkins console output.'
+        }
+    }
+}

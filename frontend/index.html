@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f7fb">
+  <title>PeopleHub | HR Portal</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="config.js"></script>
+  <script defer src="app.bundle.js"></script>
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <!-- Sidebar: visible only after login -->
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard">
+        <span class="brand-mark">P</span>
+        <span>PeopleHub<small>HR MANAGEMENT</small></span>
+      </a>
+
+      <p class="nav-label">WORKSPACE</p>
+      <nav class="navigation">
+        <a class="nav-link active" href="#dashboard">
+          <span class="nav-icon">▦</span> Dashboard
+        </a>
+        <a class="nav-link" href="#employees">
+          <span class="nav-icon">♙</span> Employees
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="security-note">
+          <span class="security-icon">✓</span>
+          <div>
+            <strong>Secure workspace</strong>
+            <small>HR portal access</small>
+          </div>
+        </div>
+        <button id="logoutBtn" class="logout-button" type="button" hidden>
+          <span>↪</span> Sign out
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">PEOPLEHUB</p>
+          <h1 id="pageTitle">Welcome to HR Dashboard</h1>
+        </div>
+        <div class="topbar-user">
+          <div class="avatar">HR</div>
+          <div>
+            <strong>HR Workspace</strong>
+            <small>Employee administration</small>
+          </div>
+        </div>
+      </header>
+
+      <!-- Login page -->
+      <section id="loginSection" class="login-wrap">
+        <div class="login-card">
+          <div class="login-logo">P</div>
+          <p class="eyebrow">WELCOME BACK</p>
+          <h2>Sign in to PeopleHub</h2>
+          <p class="muted">Use your authorized HR account to continue.</p>
+
+          <form id="loginForm">
+            <label for="email">Email address</label>
+            <input id="email" type="email" required autocomplete="username"
+              placeholder="you@company.com">
+
+            <label for="password">Password</label>
+            <input id="password" type="password" required
+              autocomplete="current-password" placeholder="Enter password">
+
+            <button class="button primary full-width" type="submit">Sign in</button>
+          </form>
+
+          <p class="login-footnote">
+            HR accounts are provisioned by an administrator.
+          </p>
+        </div>
+      </section>
+
+      <!-- Application: hidden until login -->
+      <section id="employeeSection" hidden>
+        <!-- Dashboard -->
+        <section id="dashboard" class="page-section">
+          <div class="welcome-row">
+            <div>
+              <h2>Your people at a glance</h2>
+              <p class="muted">A quick overview of your employee directory.</p>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <article class="stat-card">
+              <div class="stat-heading">
+                <span>Total employees</span>
+                <span class="stat-icon indigo">♙</span>
+              </div>
+              <p class="stat-number" id="totalEmployees">0</p>
+              <p class="stat-caption">Employee records</p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-heading">
+                <span>Departments</span>
+                <span class="stat-icon teal">▤</span>
+              </div>
+              <p class="stat-number" id="totalDepartments">0</p>
+              <p class="stat-caption">Unique departments</p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-heading">
+                <span>New joiners</span>
+                <span class="stat-icon orange">✦</span>
+              </div>
+              <p class="stat-number" id="recentEmployees">0</p>
+              <p class="stat-caption">Employees joined recently</p>
+            </article>
+
+            <article class="stat-card">
+              <div class="stat-heading">
+                <span>Active employees</span>
+                <span class="stat-icon blue">✓</span>
+              </div>
+              <p class="stat-number" id="activeEmployees">0</p>
+              <p class="stat-caption">Currently active staff</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- Employee directory -->
+        <section id="employees" class="page-section directory-section" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">YOUR TEAM</p>
+              <h2>Employee directory</h2>
+              <p class="muted">Find, review, and manage employee records.</p>
+            </div>
+            <div class="heading-actions">
+              <button id="exportBtn" class="button secondary" type="button">
+                ↓ Export CSV
+              </button>
+              <button id="addEmployeeBtn" class="button primary" type="button">
+                + Add employee
+              </button>
+            </div>
+          </div>
+
+          <div class="directory-card">
+            <div class="toolbar">
+              <div class="search-box">
+                <span>⌕</span>
+                <input id="searchInput" type="search"
+                  placeholder="Search name, email, or job title..."
+                  aria-label="Search employees">
+              </div>
+
+              <select id="departmentFilter" aria-label="Filter by department">
+                <option value="">All departments</option>
+              </select>
+
+              <select id="sortSelect" aria-label="Sort employees">
+                <option value="name-asc">Name A–Z</option>
+                <option value="name-desc">Name Z–A</option>
+                <option value="department-asc">Department A–Z</option>
+                <option value="email-asc">Email A–Z</option>
+              </select>
+
+              <button id="clearFiltersBtn" class="button text-button" type="button">
+                Clear filters
+              </button>
+            </div>
+
+            <div id="statusMessage" class="status-message"
+              role="status" aria-live="polite"></div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>EMPLOYEE</th>
+                    <th>DEPARTMENT</th>
+                    <th>JOB TITLE</th>
+                    <th>EMAIL</th>
+                    <th>JOINING DATE</th>
+                    <th>STATUS</th>
+                    <th class="actions-column">ACTIONS</th>
+                  </tr>
+                </thead>
+                <tbody id="employeeTable"></tbody>
+              </table>
+            </div>
+
+            <div id="emptyState" class="empty-state" hidden>
+              <div class="empty-icon">♙</div>
+              <h3>No employees found</h3>
+              <p>Try changing your search or filters, or add a new employee.</p>
+              <button id="emptyAddBtn" class="button primary" type="button">
+                + Add employee
+              </button>
+            </div>
+
+            <div class="pagination">
+              <span id="paginationInfo">Showing 0 employees</span>
+              <div class="pagination-controls">
+                <label for="pageSize">Rows</label>
+                <select id="pageSize" aria-label="Rows per page">
+                  <option value="5">5</option>
+                  <option value="10" selected>10</option>
+                  <option value="20">20</option>
+                </select>
+                <button id="prevPageBtn" class="button page-button" type="button"
+                  aria-label="Previous page">‹</button>
+                <span id="pageInfo">1 / 1</span>
+                <button id="nextPageBtn" class="button page-button" type="button"
+                  aria-label="Next page">›</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Add/edit employee form -->
+        <section id="employeeEditor" class="editor-card" hidden>
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">EMPLOYEE DETAILS</p>
+              <h2 id="formTitle">Add employee</h2>
+              <p class="muted">Fields marked with * are required.</p>
+            </div>
+            <button id="closeEditorBtn" class="button secondary" type="button">
+              Cancel
+            </button>
+          </div>
+
+          <form id="employeeForm">
+            <input id="employeeId" type="hidden">
+
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="name">Full name *</label>
+                <input id="name" required maxlength="100" autocomplete="name"
+                  placeholder="e.g. Ananya Nair">
+              </div>
+
+              <div class="form-field">
+                <label for="employeeEmail">Work email *</label>
+                <input id="employeeEmail" type="email" required maxlength="254"
+                  autocomplete="email" placeholder="name@company.com">
+              </div>
+
+              <div class="form-field">
+                <label for="department">Department *</label>
+                <input id="department" required maxlength="100"
+                  placeholder="e.g. Human Resources" list="departmentSuggestions">
+                <datalist id="departmentSuggestions"></datalist>
+              </div>
+
+              <div class="form-field">
+                <label for="jobTitle">Job title *</label>
+                <input id="jobTitle" required maxlength="100"
+                  placeholder="e.g. HR Executive">
+              </div>
+
+              <div class="form-field">
+                <label for="joiningDate">Joining date *</label>
+                <input id="joiningDate" type="date" required>
+              </div>
+
+              <div class="form-field">
+                <label for="employmentStatus">Employment status *</label>
+                <select id="employmentStatus" required>
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="formMessage" class="form-message"
+              role="status" aria-live="polite"></div>
+
+            <div class="form-actions">
+              <button id="cancelEditBtn" class="button secondary" type="button">
+                Cancel
+              </button>
+              <button id="saveBtn" class="button primary" type="submit">
+                Save employee
+              </button>
+            </div>
+          </form>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- Employee profile modal -->
+  <div id="profileOverlay" class="modal-overlay" hidden>
+    <section class="profile-modal" role="dialog" aria-modal="true"
+      aria-labelledby="profileName">
+      <button id="closeProfileBtn" class="modal-close" type="button"
+        aria-label="Close profile">×</button>
+
+      <div class="profile-avatar" id="profileAvatar">E</div>
+      <p class="eyebrow">EMPLOYEE PROFILE</p>
+      <h2 id="profileName">Employee name</h2>
+      <p id="profileJobTitle" class="muted"></p>
+
+      <div class="profile-details">
+        <div><span>Employee ID</span><strong id="profileId">—</strong></div>
+        <div><span>Email</span><strong id="profileEmail">—</strong></div>
+        <div><span>Department</span><strong id="profileDepartment">—</strong></div>
+        <div><span>Joining date</span><strong id="profileJoiningDate">—</strong></div>
+        <div><span>Employment status</span><strong id="profileEmploymentStatus">—</strong></div>
+      </div>
+
+      <div class="form-actions">
+        <button id="profileEditBtn" class="button primary" type="button">
+          Edit employee
+        </button>
+        <button id="profileDoneBtn" class="button secondary" type="button">
+          Close
+        </button>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
