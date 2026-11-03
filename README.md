@@ -46,7 +46,7 @@ The domain is registered with GoDaddy. A Route 53 hosted zone is created for the
 
 The backend is deployed on Amazon Elastic Kubernetes Service (EKS).
 
-[EKS](peoplehub-images/eks.png)
+![EKS](peoplehub-images/eks.png)
 
 Components:
 - Amazon EKS manages the Kubernetes cluster.
