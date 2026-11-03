@@ -16,11 +16,11 @@ The application uses:
 - **DNS and CDN:** Amazon Route 53 and Amazon CloudFront.
 - **Security:** AWS WAF, ACM, IAM, Security Groups and Network ACLs.
 - **Monitoring:** Amazon CloudWatch and Grafana Cloud.
-
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/c291c7c3-6c0d-4ad5-b86a-bd6907e0994b" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/7f4ecd83-5ec2-4a81-a086-74579f28c0c2" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/fb661d6e-b591-4b41-b4e4-8dea56870743" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/b5a2e932-d931-49ea-9fcf-5f4de66b5a00" />
+  
+![HR Portal](peoplehub-images/hr-potal.png)
+![HR Portal 2](peoplehub-images/hr-portal2.png)
+![HR Portal 3](peoplehub-images/hr-portal-3.png)
+![HR Portal 4](peoplehub-images/hr-portal-4.png)
 
 ## 2. Architecture Overview
 
