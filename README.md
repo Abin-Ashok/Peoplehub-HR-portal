@@ -24,7 +24,7 @@ The application uses:
 
 ## 2. Architecture Overview
 
-![Workflow Diagram](peoplehub-images/workflow-digram.png)
+![Workflow Diagram](peoplehub-images/workflow-digram2.png)
 
 The application follows a three-tier architecture.
 
