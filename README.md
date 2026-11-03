@@ -24,7 +24,7 @@ The application uses:
 
 ## 2. Architecture Overview
 
-<img width="3420" height="3792" alt="mermaid-diagram (1)" src="https://github.com/user-attachments/assets/5d08ebf4-cae3-4e65-b61b-a531662db712" />
+![Workflow Diagram](peoplehub-images/workflow-digram.png)
 
 The application follows a three-tier architecture.
 
@@ -46,7 +46,7 @@ The domain is registered with GoDaddy. A Route 53 hosted zone is created for the
 
 The backend is deployed on Amazon Elastic Kubernetes Service (EKS).
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/7082a8fd-75ba-4435-89e9-2610f8f76c3a" />
+[EKS](peoplehub-images/eks.png)
 
 Components:
 - Amazon EKS manages the Kubernetes cluster.
@@ -64,7 +64,7 @@ The frontend communicates with the backend through the internal ALB using the co
 
 ### Tier 3 – Database Layer
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/b0f2dff8-9ed6-4f55-9e0e-cc39affe1015" />
+![Database](peoplehub-images/db.png)
 
 Amazon RDS MySQL provides persistent application data storage.
 
@@ -107,7 +107,8 @@ The database is not intended to be publicly accessible.
 
 ## 4. Domain, DNS and HTTPS Configuration
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/c15dc71d-bba1-450c-93ac-1783abeec8c1" />
+![Route 53](peoplehub-images/godady.png)
+![Route 53](peoplehub-images/route53-image.png)
 
 The project uses a custom domain registered through GoDaddy.
 
@@ -127,8 +128,7 @@ The DNS and HTTPS setup follows this flow:
 
 ## 5. High Availability and Disaster Recovery
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/63bc5926-3313-46fc-9ab0-36092bff34a1" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/ee48795e-b0c0-4760-ac4c-3922cc116132" />
+![VPC](peoplehub-images/vpc-image.png)
 
 The infrastructure is designed around two Availability Zones.
 
@@ -158,8 +158,8 @@ The project uses **three separate Git repositories**, rather than a single monol
 
 ### Frontend CI/CD Pipeline
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/7d972ea1-baf7-4653-af96-cfc2129bc868" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/b37de89e-f004-40c1-a56f-eb58138efed9" />
+![Jenkins 2](peoplehub-images/jenkins-2.png)
+![Jenkins 3](peoplehub-images/jenkins-3.png)
 
 1. Developer pushes frontend code to the frontend Git repository.
 2. Jenkins detects the code change.
@@ -172,7 +172,7 @@ The project uses **three separate Git repositories**, rather than a single monol
 
 ### Backend CI/CD Pipeline
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/e6ca83bb-dc31-43e6-8e5e-63555dd1aba1" />
+![Jenkins 1](peoplehub-images/jenkins1.png)
 
 1. Developer pushes backend code to the backend Git repository.
 2. Jenkins detects the code change.
@@ -219,8 +219,8 @@ Terraform helps maintain repeatable infrastructure deployments and makes infrast
 
 ## 8. Containerization and Amazon ECR
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/22020c5b-5472-4e9a-9f87-9326ac68af88" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/1bdbef2a-516a-4421-b43f-98ea91c018c5" />
+![ECR Backend](peoplehub-images/ecr-back.png)
+![ECR Frontend](peoplehub-images/ecr-front.png)
 
 Docker is used to package the application components.
 
@@ -239,9 +239,9 @@ Amazon EKS pulls the backend image from ECR to run the application containers.
 
 ## 9. Asynchronous Processing – SQS, Lambda and SES
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/24b209f4-51d4-42cf-b118-eff3821e83d5" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/256d9da3-826e-488e-9410-a4fcbde5a0f3" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/c5c5f959-3013-4a9d-bf8f-8cf875ad2d88" />
+![SES](peoplehub-images/ses-image.png)
+![SQS](peoplehub-images/sqs-image.png)
+![Lambda](peoplehub-images/lamda-image.png)
 
 The project uses an event-driven workflow for email notifications.
 
@@ -271,7 +271,7 @@ Security Groups are stateful, while Network ACLs are stateless. Both can be used
 
 ### Application and Edge Security
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/7331cf80-0f43-4783-8aee-e60e7e7c718c" />
+![CloudFront](peoplehub-images/cf-image.png)
 
 - AWS WAF protects the CloudFront distribution.
 - HTTPS is configured using AWS Certificate Manager.
@@ -292,9 +292,9 @@ The project uses Amazon CloudWatch and Grafana Cloud.
 
 ### Amazon CloudWatch
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/fbf516a3-5998-4b56-ab87-86229d1df780" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/6fc9f802-6fdc-4b3a-9683-b82d157e9c85" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/7a930b85-e7a5-4285-a958-8c8057f0b194" />
+![CloudWatch 1](peoplehub-images/cw-image.png)
+![CloudWatch 2](peoplehub-images/cw-2-image.png)
+![CloudWatch Logs](peoplehub-images/cw-log.png)
 
 CloudWatch is used to monitor AWS resources and collect metrics and logs.
 
@@ -308,12 +308,11 @@ Monitoring includes:
 
 ### Grafana Cloud
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/82afaf52-3be3-424c-8074-8bbf880ba17a" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/4126be82-1f3d-4851-9d72-f0bfeb31d201" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/ac255094-49a8-421e-8f11-b1f20022e87a" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/ec56d3db-4e46-468a-aabc-3642e7ee91f6" />
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/dc7c3103-aeeb-4d9e-bd96-56e240b4af40" />
-
+![Grafana 1](peoplehub-images/grafana1.png)
+![Grafana 2](peoplehub-images/grafana2.png)
+![Grafana 3](peoplehub-images/grafana3.png)
+![Grafana 4](peoplehub-images/grafana4.png)
+![Grafana 5](peoplehub-images/grafana5.png)
 
 Grafana Cloud connects to AWS CloudWatch as a data source.
 
@@ -330,7 +329,7 @@ CloudWatch provides the metric data, while Grafana Cloud visualizes the data thr
 
 ## 12. Application Authentication
 
-<img width="1920" height="1140" alt="image" src="https://github.com/user-attachments/assets/01deaf87-b62d-4006-930f-bf03b3957cb5" />
+![Cognito](peoplehub-images/cognito.png)
 
 Amazon Cognito is used for user authentication.
 
