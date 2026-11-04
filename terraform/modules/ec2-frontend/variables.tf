@@ -32,19 +32,19 @@ variable "instance_type" {
 variable "min_size" {
   description = "Minimum number of frontend instances"
   type        = number
-  default     = 0
+  default     = 1
 }
 
 variable "desired_capacity" {
   description = "Desired number of frontend instances"
   type        = number
-  default     = 0
+  default     = 2
 }
 
 variable "max_size" {
   description = "Maximum number of frontend instances"
   type        = number
-  default     = 2
+  default     = 3
 }
 
 variable "instance_profile_name" {
