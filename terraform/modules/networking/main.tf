@@ -37,7 +37,6 @@ resource "aws_subnet" "public" {
     Name                                       = "${var.project_name}-${var.environment}-public-${count.index + 1}"
     Tier                                       = "public"
     "kubernetes.io/role/elb"                   = "1"
-    "kubernetes.io/cluster/peoplehub-prod-eks" = "shared"
   })
 }
 
